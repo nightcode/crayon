@@ -1,0 +1,15 @@
+.DS_Store
+
+target/
+out/
+
+.idea/
+*.ipr
+*.iws
+*.iml
+
+.classpath
+.project
+.settings/
+
+node_modules

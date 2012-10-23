@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Crayon</title>
+
+<style>
+  @import url(crayon.css);
+</style>
+ 
+<body>
+
+<p id="example" style="margin:20px;"></p>
+<p id="example2" style="margin:20px;"></p>
+<p id="example3" style="margin:20px;"></p>
+
+</body>
+
+<script src="d3.v2.js"></script>
+<script src="stream_layers.js"></script>
+
+<script src="crayon.v0.js"></script>
+
+<script>
+  var formatDate = d3.time.format("%b %Y");
+
+  var layer1 = stream_layers(1, 8, 300);
+  var layer2 = stream_layers(1, 8, 100);
+  var layer3 = stream_layers(1, 8, 200);
+  var data = layer1[0].map(function(d,i) {
+    return {x:d.x, y1:d.y, y2:layer2[0][i].y, y3:layer3[0][i].y};
+  });  
+    
+  d3.select("#example")
+      .call(crayon.lineChart()
+      .data(data)
+      .width(450)
+      .height(250));
+    
+  d3.select("#example2")
+      .call(crayon.barChart()
+      .data(data)
+      .width(450)
+      .height(250));
+  
+  d3.select("#example3")
+      .call(crayon.sparklineChart()
+      .data(layer1[0])
+      .width(200)
+      .height(50));
+
+</script>
