@@ -15,7 +15,7 @@
   stroke-opacity: 1;
   stroke-dasharray: none;
   stroke-dashoffset: 0;
-  stroke-width: 5;
+  stroke-width: 5px;
 }
 .legend-box {
   cursor: pointer;
@@ -25,7 +25,7 @@
   fill-opacity: 1;
   fill-rule: nonzero;
   stroke: #dddddd;
-  stroke-width: 1;
+  stroke-width: 1px;
   font-size: 10px;
 }
 .legend-rect.disabled {
@@ -53,19 +53,20 @@
   fill: #a5a5a5;
   font: 9px sans-serif;
 }
-.line-axis path, .line-axis line {
+.line-axis path {
   fill: none;
-  stroke: #e2e2e2;
+  stroke: #ccc;
+  stroke-width: 1px;
+}
+.line-axis line {
+  fill: none;
+  stroke: #ccc;
   stroke-width: 0.5px;
 }
 .y.line-axis line {
-  fill: none;
-  stroke: #e2e2e2;
-  stroke-width: 1;
   stroke-opacity: 1;
   stroke-dasharray: 3, 3;
   stroke-dashoffset: 0;
-  stroke-width: 0.5px;
 }
 
 .sparkline-chart {
@@ -74,7 +75,7 @@
 }
 .x.sparkline-axis path, .y.sparkline-axis path {
   fill: none;
-  stroke: #e2e2e2;
+  stroke: #ccc;
   stroke-width: 1px;
 }
 
@@ -82,26 +83,27 @@
   stroke-width: 1px;
 }
 .bar-axis text {
-  fill: #a5a5a5;
+  fill: #a2a2a2;
   font: 9px sans-serif;
 }
-.x.bar-axis text {
-  font: 9px sans-serif;
+.bar-axis path {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1px;
 }
-.y.bar-axis line.zero {
+.x.bar-axis path.domain {
   stroke: none;
 }
-.bar-axis path, .bar-axis line {
+.bar-axis line {
   fill: none;
-  stroke: #e2e2e2;
+  stroke: #ccc;
   stroke-width: 0.5px;
 }
 .y.bar-axis line {
-  fill: none;
-  stroke: #e2e2e2;
-  stroke-width: 1;
   stroke-opacity: 1;
   stroke-dasharray: 3, 3;
   stroke-dashoffset: 0;
-  stroke-width: 0.5px;
 } 
+.y.bar-axis line.zero {
+  stroke: none;
+}
