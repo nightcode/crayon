@@ -10,7 +10,6 @@ crayon_barChart = function() {
       yScale = d3.scale.linear(),
       xAxis = crayon.axis().scale(xScale).orient("horizontal"),
       yAxis = crayon.axis().scale(yScale).orient("vertical"),
-      barPaint = crayon.bar(),
       series,
       seriesNames,
       colors,
@@ -48,16 +47,6 @@ crayon_barChart = function() {
         
         xScale.rangeRoundBands([0, actualWidth - tickMargin], .3).domain(d3.merge(series).map(function(d) { return d.x; }));
         xAxis.tickFormat(xTickFormat);        
-
-        var xWidthScale = d3.scale.ordinal()
-            .domain(seriesNames.map(function(d) { return d.key; }))
-            .rangeRoundBands([0, xScale.rangeBand()]);
-        
-        barPaint
-            .x(function(d,i,layer) { return (xScale(d.x) + layer * xWidthScale.rangeBand()); })
-            .y(function() { return height; })
-            .height(function(d) { return yScale(d.y); })
-            .width(function() { return xWidthScale.rangeBand(); });
       }      
 
       var filteredSeries = series.filter(function(d, i) { return (!seriesNames[i].disabled); });
@@ -66,16 +55,29 @@ crayon_barChart = function() {
       xScale.domain(mergedFilteredSeries.map(function(d) { return d.x; }));
       yScale.domain([0, d3.max(mergedFilteredSeries, function(d) { return d.y; })]).nice();
             
+       var xWidthScale = d3.scale.ordinal()
+            .domain(seriesNames.map(function(d) { return d.key; })
+              .filter(function(d, i) { return !(seriesNames[i].disabled); }))
+            .rangeRoundBands([0, xScale.rangeBand()]);
+      
       g.select(".x.bar-axis").call(xAxis);
       g.select(".y.bar-axis").call(yAxis);
             
-      var layers = g.select(".bars-chart").selectAll(".bar-chart").data(filteredSeries.length > 0 ? d3.layout.stack()(filteredSeries) : []),
-          layersEnter = layers.enter()
-              .append("path")
-              .attr("class", "bar-chart"),
-          layersExit = layers.exit().remove(),
-          layersUpdate = layers.style("fill", function(d, i) { return colors(i); })
-              .attr("d", barPaint);
+      var layers = g.select(".bars-chart").selectAll(".bar-chart")
+          .data(filteredSeries.length > 0 ? d3.layout.stack()(filteredSeries) : []);
+      layers.enter().append("g")
+          .attr("class", "bar-chart");
+      layers.style("fill", function(d, i) { return colors(i); })
+          .attr("transform", function(d, i) { return "translate(" + i * xWidthScale.rangeBand() + ",0)"; });
+      layers.exit().remove();
+      
+      var bars = layers.selectAll(".bar-chart rect").data(function(d) { return d; });
+      bars.enter().append("rect");
+      bars.attr("x", function(d) { return xScale(d.x); })
+          .attr("y", function(d) { return yScale(d.y); })
+          .attr("width", xWidthScale.rangeBand())
+          .attr("height", function(d) { return height - yScale(d.y); });
+      bars.exit().remove();
     });
   }
   
