@@ -18,6 +18,7 @@ crayon.core.js: \
   src/core/colors.js \
   src/core/legend.js \
   src/core/axis.js \
+  src/core/tooltip.js \
   src/core/bar.js
 
 crayon.chart.js: \

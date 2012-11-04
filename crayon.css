@@ -40,9 +40,15 @@
   font: 11px sans-serif;
   fill: #707070;
 }
-.y.line-axis line.zero {
-  stroke: none;
-} 
+
+.tooltip path {
+  fill: #fff;
+  stroke: #000;
+}
+.tooltip text {
+  font: 10px sans-serif;
+  font-weight: bold;
+}
   
 .line-chart {
   fill: none;
@@ -67,6 +73,9 @@
   stroke-opacity: 1;
   stroke-dasharray: 3, 3;
   stroke-dashoffset: 0;
+}
+.y.line-axis line.zero {
+  stroke: none;
 }
 
 .sparkline-chart {
