@@ -62,21 +62,66 @@ crayon_barChart = function() {
       
       g.select(".x.bar-axis").call(xAxis);
       g.select(".y.bar-axis").call(yAxis);
-            
-      var layers = g.select(".bars-chart").selectAll(".bar-chart")
+           
+      var barsChart = g.select(".bars-chart");
+      
+      var layers = barsChart.selectAll(".bar-chart")
           .data(filteredSeries.length > 0 ? d3.layout.stack()(filteredSeries) : []);
       layers.enter().append("g")
           .attr("class", "bar-chart");
       layers.style("fill", function(d, i) { return colors(i); })
-          .attr("transform", function(d, i) { return "translate(" + i * xWidthScale.rangeBand() + ",0)"; });
+          .attr("transform", function(d, i) { return "translate(" + i * xWidthScale.rangeBand() + ",0)"; })
+          .on("mouseover", function(d, i) {             
+            barsChart.append("g")
+                .attr("class", "tooltip")
+                .attr("transform", function() { return "translate(" + i * xWidthScale.rangeBand() + ",0)"; })
+          }, true);
       layers.exit().remove();
       
       var bars = layers.selectAll(".bar-chart rect").data(function(d) { return d; });
-      bars.enter().append("rect");
+      bars.enter().append("rect")
+          .on("mouseout", function() { barsChart.selectAll(".tooltip").remove(); });
       bars.attr("x", function(d) { return xScale(d.x); })
           .attr("y", function(d) { return yScale(d.y); })
           .attr("width", xWidthScale.rangeBand())
-          .attr("height", function(d) { return height - yScale(d.y); });
+          .attr("height", function(d) { return height - yScale(d.y); })
+          .on("mouseover", function(d) {                                    
+            var x = xScale(d.x),
+                y = yScale(d.y);            
+        
+            var gTooltip = barsChart.selectAll(".tooltip"),
+                tooltipPath = gTooltip.append("path");
+
+            var xValue = gTooltip.append("text").attr().text(d.x),
+                yValue = gTooltip.append("text").attr().text(d.y);
+            
+            var xSvgRect = xValue.node().getExtentOfChar(0),
+                ySvgRect = yValue.node().getExtentOfChar(0);
+            
+            var w = d3.max([xValue.node().getComputedTextLength(), yValue.node().getComputedTextLength()]),
+                h = xSvgRect.height + ySvgRect.height;
+                       
+            var tooltip = crayon.tooltip();
+            
+            var xDirection = (x + w + tooltip.margin()*2 > width) ? "w" : "e",
+                yDirection = (y - h - tooltip.margin()*2 > 0) ? "n" : "s";
+            if (xDirection === "e") {
+              x += xWidthScale.rangeBand();              
+            }
+            
+            tooltip.orient(yDirection + xDirection);            
+            tooltipPath.attr("d", tooltip(x, y, w, h));
+
+            var tooltipRect = tooltip.rect(x, y, w, h);
+            
+            console.log(xSvgRect);
+            
+            xValue.attr("x", tooltipRect.w)
+                .attr("y", tooltipRect.n + xSvgRect.height);
+            yValue.attr("x", tooltipRect.w)
+                .attr("y", tooltipRect.n + xSvgRect.height * 2);
+          }) 
+      ;
       bars.exit().remove();
     });
   }
